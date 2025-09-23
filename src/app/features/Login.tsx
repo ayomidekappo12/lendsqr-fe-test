@@ -1,37 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { storage } from "@/utils/storage";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-// import loginIllustration from "@/assets/login-illustration.png"; // make sure you add this
 
+
+//  Schema & Types
 const loginSchema = z.object({
-  email: z.email({ message: "Invalid email format" }),
+  email: z.string().email("Invalid email format"),
   password: z
     .string()
-    .min(8, { message: "Password must be at least 8 characters" })
+    .min(8, "Password must be at least 8 characters")
     .regex(
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?:.*[@$!%*?&-])?[A-Za-z\d@$!%*?&-]{8,}$/,
-      {
-        message:
-          "Password must contain at least one uppercase letter, one lowercase letter, and a numerical value",
-      }
+      "Password must contain at least one uppercase, one lowercase, and a number"
     ),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
+const TOKEN_KEY = "auth_token";
+const ROLE_KEY = "role";
+const USER_ID_KEY = "userId";
+
+
+// Login Component
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
   const router = useRouter();
 
   const {
@@ -40,101 +46,135 @@ export default function Login() {
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
+    mode: "onBlur",
   });
 
-const onSubmit = async (data: LoginFormData) => {
-  setLoading(true);
-  setError("");
 
-  try {
-    const user = await storage.getUserByEmail(data.email);
+  // Submit Handler
+  const onSubmit = useCallback(
+    async (data: LoginFormData) => {
+      setLoading(true);
+      setError(null);
 
-    if (!user || user.password !== data.password) {
-      setError("Invalid email or password");
-      return;
-    }
+      try {
+        const user = await storage.getUserByEmail(data.email);
 
-    // If no token, generate one
-    const token = user.token ?? crypto.randomUUID();
-    await storage.saveUser({ ...user, token });
+        if (!user || user.password !== data.password) {
+          setError("Invalid email or password");
+          return;
+        }
 
-    localStorage.setItem("auth_token", token);
-    localStorage.setItem("role", user.role ?? "user");
-    localStorage.setItem("userId", user.id);
+        const token = user.token ?? crypto.randomUUID();
+        await storage.saveUser({ ...user, token });
 
-    router.push("/dashboard");
-  } catch (err: any) {
-    setError(err.message || "Login failed. Please try again.");
-  } finally {
-    setLoading(false);
-  }
-};
+        localStorage.setItem(TOKEN_KEY, token);
+        localStorage.setItem(ROLE_KEY, user.role ?? "user");
+        localStorage.setItem(USER_ID_KEY, user.id);
+
+        router.push("/dashboard");
+      } catch (err: unknown) {
+        const message =
+          err instanceof Error
+            ? err.message
+            : "Login failed. Please try again.";
+        setError(message);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [router]
+  );
 
 
   return (
-    <div className="min-h-screen bg-white flex">
-      {/* Left side - Illustration */}
-      <div className="hidden lg:flex lg:w-1/2 items-center justify-center bg-gray-50 p-12">
+    <div className="min-h-screen flex bg-white">
+      {/* Left side illustration */}
+      <aside className="hidden lg:flex lg:w-1/2 items-center justify-center bg-gray-50 p-12">
         <div className="max-w-md">
-          <div className="flex items-center gap-2 mb-8">
-            <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
-              <span className="text-white text-sm font-bold">L</span>
-            </div>
-            <span className="text-2xl font-bold text-foreground">lendsqr</span>
+          <div className="flex items-center gap-2 mb-28">
+            <Image
+              src="https://res.cloudinary.com/dxvf9uqwe/image/upload/v1758654234/Union_lzcwgo.svg"
+              alt="Lendsqr logo"
+              width={20}
+              height={19}
+              priority
+            />
+            <span className="text-2xl font-bold text-text-primary">
+              lendsqr
+            </span>
           </div>
           <Image
-            src={
-              "https://res.cloudinary.com/dxvf9uqwe/image/upload/v1758583828/pablo-sign-in_1_gctdra.svg"
-            }
-            alt="logo"
-            width={1500}
-            height={1500}
-            className="w-full h-auto"
-            loading="lazy"
+            src="https://res.cloudinary.com/dxvf9uqwe/image/upload/v1758654236/pablo-sign-in_1_qly0ff.svg"
+            alt="Login illustration"
+            width={500}
+            height={500}
+            priority
           />
         </div>
-      </div>
+      </aside>
 
-      {/* Right side - Login form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
+      {/* Right side login form */}
+      <main className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <div className="lg:hidden flex items-center gap-2 mb-8 justify-center">
-            <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
-              <span className="text-white text-sm font-bold">L</span>
-            </div>
-            <span className="text-2xl font-bold text-foreground">lendsqr</span>
+            <Image
+              src="https://res.cloudinary.com/dxvf9uqwe/image/upload/v1758654234/Union_lzcwgo.svg"
+              alt="Lendsqr logo"
+              width={50}
+              height={50}
+              priority
+            />
+            <span className="text-3xl font-bold text-text-primary">
+              lendsqr
+            </span>
           </div>
 
-          {/* Welcome message */}
-          <div className="mb-8">
+          {/* Welcome text */}
+          <header className="flex flex-col items-center md:items-start mb-8">
             <h1 className="text-4xl font-bold text-text-primary mb-2">
               Welcome!
             </h1>
-            <p className="text-text-secondary">Enter details to login.</p>
-          </div>
+            <p className="text-text-secondary text-lg">
+              Enter details to login.
+            </p>
+          </header>
 
+          {/* Error */}
           {error && (
-            <p className="mb-4 rounded bg-red-100 p-2 text-sm text-red-600">
+            <p
+              role="alert"
+              className="mb-4 rounded bg-red-100 p-2 text-sm text-red-600"
+            >
               {error}
             </p>
           )}
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {/* Form */}
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            noValidate
+            className="space-y-6"
+            aria-busy={loading}
+          >
             {/* Email */}
             <div className="space-y-2">
-              <Label htmlFor="email" className="sr-only">
-                Email
-              </Label>
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="Email"
-                className="h-12 text-base"
+                className="h-12 text-base border-border"
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? "email-error" : undefined}
                 {...register("email")}
               />
               {errors.email && (
-                <p className="mt-1 text-xs text-red-500">
+                <p
+                  id="email-error"
+                  role="alert"
+                  className="text-xs text-red-500"
+                >
                   {errors.email.message}
                 </p>
               )}
@@ -142,51 +182,60 @@ const onSubmit = async (data: LoginFormData) => {
 
             {/* Password */}
             <div className="space-y-2">
-              <Label htmlFor="password" className="sr-only">
-                Password
-              </Label>
+              <Label htmlFor="password">Password</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
-                  className="h-12 text-base pr-12"
+                  className="h-12 text-base pr-12 border-border"
+                  aria-invalid={!!errors.password}
+                  aria-describedby={
+                    errors.password ? "password-error" : undefined
+                  }
                   {...register("password")}
                 />
                 {errors.password && (
-                  <p className="mt-1 text-xs text-red-500">
+                  <p
+                    id="password-error"
+                    role="alert"
+                    className="mt-1 text-xs text-red-500"
+                  >
                     {errors.password.message}
                   </p>
                 )}
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-primary hover:bg-primary text-sm font-medium cursor-pointer"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-primary text-xs font-semibold"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? "HIDE" : "SHOW"}
                 </button>
               </div>
             </div>
 
+            {/* Forgot password */}
             <div className="text-left">
               <a
                 href="#"
-                className="text-sm text-primary hover:text-primary-hover cursor-pointer"
+                className="text-xs font-semibold text-primary hover:text-primary-hover"
               >
                 FORGOT PASSWORD?
               </a>
             </div>
 
+            {/* Submit */}
             <Button
               type="submit"
-              className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary-hover cursor-pointer"
+              className="w-full h-12 text-sm font-semibold bg-primary hover:bg-primary-hover rounded-lg cursor-pointer"
               disabled={loading}
             >
               {loading ? "LOGGING IN..." : "LOG IN"}
             </Button>
           </form>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

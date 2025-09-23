@@ -6,126 +6,107 @@
    All colors converted from OKLCH → RGB
 */
 
+@theme inline {
+  /* ───── Base Colors ───── */
+  --color-background: rgb(255, 255, 255);
+  --color-foreground: rgb(0, 33, 57);
+
+  /* Brand Colors */
+  --color-primary: rgb(57, 205, 204);
+  --color-primary-foreground: rgb(255, 255, 255);
+  --color-primary-hover: rgb(0, 157, 134);
+
+  --color-secondary: rgb(227, 241, 251);
+  --color-secondary-foreground: rgb(0, 33, 57);
+
+  /* Text Colors */
+  --color-text-primary: rgb(33, 63, 125);
+  --color-text-secondary: rgb(84, 95, 125);
+  --color-text-muted: rgb(149, 175, 194);
+
+  /* Status Colors */
+  --color-success: rgb(68, 163, 80);
+  --color-success-light: rgb(229, 253, 229);
+  --color-warning: rgb(227, 194, 59);
+  --color-warning-light: rgb(253, 246, 216);
+  --color-error: rgb(240, 86, 83);
+  --color-error-light: rgb(255, 235, 232);
+
+  /* Surfaces */
+  --color-card: rgb(255, 255, 255);
+  --color-card-foreground: rgb(0, 33, 57);
+  --color-popover: rgb(255, 255, 255);
+  --color-popover-foreground: rgb(0, 33, 57);
+
+  /* Borders & Inputs */
+  --color-border: rgb(233, 236, 242);
+  --color-input: rgb(255, 255, 255);
+  --color-input-focus: rgb(57, 205, 204);
+  --color-ring: rgb(57, 205, 204);
+
+  /* Sidebar */
+  --color-sidebar-background: rgb(255, 255, 255);
+  --color-sidebar-foreground: rgb(0, 33, 57);
+  --color-sidebar-border: rgb(198, 211, 221);
+  --color-sidebar-hover: rgb(234, 247, 255);
+  --color-sidebar-active: rgb(0, 170, 146);
+  --color-sidebar-active-bg: rgb(217, 255, 246);
+
+  /* Stats Cards */
+  --color-users-icon: rgb(140, 154, 255);
+  --color-users-bg: rgb(241, 247, 255);
+  --color-active-users-icon: rgb(0, 187, 211);
+  --color-active-users-bg: rgb(218, 255, 255);
+  --color-loans-icon: rgb(227, 194, 59);
+  --color-loans-bg: rgb(253, 246, 216);
+  --color-savings-icon: rgb(240, 86, 83);
+  --color-savings-bg: rgb(255, 235, 232);
+
+  /* Radius */
+  --radius-sm: calc(0.375rem - 4px);
+  --radius-md: calc(0.375rem - 2px);
+  --radius-lg: 0.375rem;
+  --radius-xl: calc(0.375rem + 4px);
+}
+
+/* Dark Mode */
 @layer base {
-  :root {
-    /* Core Brand Colors */
-    --background: rgb(255, 255, 255);
-    --foreground: rgb(0, 33, 57);
-
-    /* Lendsqr Primary Teal */
-    --primary: rgb(0, 170, 146);
-    --primary-foreground: rgb(255, 255, 255);
-    --primary-hover: rgb(0, 157, 134);
-
-    /* Secondary Colors */
-    --secondary: rgb(227, 241, 251);
-    --secondary-foreground: rgb(0, 33, 57);
-
-    /* Surface Colors */
-    --card: rgb(255, 255, 255);
-    --card-foreground: rgb(0, 33, 57);
-
-    /* Input & Border */
-    --border: rgb(198, 211, 221);
-    --input: rgb(198, 211, 221);
-    --input-focus: rgb(0, 170, 146);
-    --ring: rgb(0, 170, 146);
-
-    /* Text Colors */
-    --text-primary: rgb(0, 33, 57);
-    --text-secondary: rgb(74, 119, 151);
-    --text-muted: rgb(149, 175, 194);
-
-    /* Status Colors */
-    --success: rgb(68, 163, 80);
-    --success-light: rgb(229, 253, 229);
-    --warning: rgb(227, 194, 59);
-    --warning-light: rgb(253, 246, 216);
-    --error: rgb(240, 86, 83);
-    --error-light: rgb(255, 235, 232);
-    --pending: rgb(227, 194, 59);
-    --blacklisted: rgb(240, 86, 83);
-    --inactive: rgb(149, 175, 194);
-    --active: rgb(68, 163, 80);
-
-    /* Sidebar */
-    --sidebar-background: rgb(255, 255, 255);
-    --sidebar-foreground: rgb(0, 33, 57);
-    --sidebar-border: rgb(198, 211, 221);
-    --sidebar-hover: rgb(234, 247, 255);
-    --sidebar-active: rgb(0, 170, 146);
-    --sidebar-active-bg: rgb(217, 255, 246);
-
-    /* Stats Cards */
-    --users-icon: rgb(140, 154, 255);
-    --users-bg: rgb(241, 247, 255);
-    --active-users-icon: rgb(0, 187, 211);
-    --active-users-bg: rgb(218, 255, 255);
-    --loans-icon: rgb(227, 194, 59);
-    --loans-bg: rgb(253, 246, 216);
-    --savings-icon: rgb(240, 86, 83);
-    --savings-bg: rgb(255, 235, 232);
-
-    /* Border Radius */
-    --radius: 0.375rem;
-
-    /* Spacing Scale */
-    --spacing-0: 0rem;
-    --spacing-1: 0.25rem;
-    --spacing-2: 0.5rem;
-    --spacing-3: 0.75rem;
-    --spacing-4: 1rem;
-    --spacing-5: 1.25rem;
-    --spacing-6: 1.5rem;
-    --spacing-8: 2rem;
-    --spacing-10: 2.5rem;
-    --spacing-12: 3rem;
-    --spacing-16: 4rem;
-    --spacing-20: 5rem;
-    --spacing-24: 6rem;
-    --spacing-32: 8rem;
-    --spacing-40: 10rem;
-    --spacing-48: 12rem;
-    --spacing-56: 14rem;
-    --spacing-64: 16rem;
-  }
-
   .dark {
-    --background: rgb(13, 10, 21);
-    --foreground: rgb(250, 250, 250);
+    --color-background: rgb(13, 10, 21);
+    --color-foreground: rgb(250, 250, 250);
 
-    --card: rgb(13, 10, 21);
-    --card-foreground: rgb(250, 250, 250);
+    --color-card: rgb(13, 10, 21);
+    --color-card-foreground: rgb(250, 250, 250);
 
-    --popover: rgb(13, 10, 21);
-    --popover-foreground: rgb(250, 250, 250);
+    --color-popover: rgb(13, 10, 21);
+    --color-popover-foreground: rgb(250, 250, 250);
 
-    --primary: rgb(250, 250, 250);
-    --primary-foreground: rgb(24, 21, 34);
+    --color-primary: rgb(250, 250, 250);
+    --color-primary-foreground: rgb(24, 21, 34);
 
-    --secondary: rgb(44, 47, 64);
-    --secondary-foreground: rgb(250, 250, 250);
+    --color-secondary: rgb(44, 47, 64);
+    --color-secondary-foreground: rgb(250, 250, 250);
 
-    --muted: rgb(44, 47, 64);
-    --muted-foreground: rgb(155, 163, 185);
+    --color-muted: rgb(44, 47, 64);
+    --color-muted-foreground: rgb(155, 163, 185);
 
-    --accent: rgb(44, 47, 64);
-    --accent-foreground: rgb(250, 250, 250);
+    --color-accent: rgb(44, 47, 64);
+    --color-accent-foreground: rgb(250, 250, 250);
 
-    --destructive: rgb(188, 54, 35);
-    --destructive-foreground: rgb(250, 250, 250);
+    --color-destructive: rgb(188, 54, 35);
+    --color-destructive-foreground: rgb(250, 250, 250);
 
-    --border: rgb(44, 47, 64);
-    --input: rgb(44, 47, 64);
-    --ring: rgb(174, 193, 240);
+    --color-border: rgb(44, 47, 64);
+    --color-input: rgb(44, 47, 64);
+    --color-ring: rgb(174, 193, 240);
 
-    --sidebar-background: rgb(26, 20, 38);
-    --sidebar-foreground: rgb(244, 244, 249);
-    --sidebar-primary: rgb(66, 112, 209);
-    --sidebar-primary-foreground: rgb(255, 255, 255);
-    --sidebar-accent: rgb(33, 29, 48);
-    --sidebar-accent-foreground: rgb(244, 244, 249);
-    --sidebar-border: rgb(33, 29, 48);
-    --sidebar-ring: rgb(0, 153, 196);
+    --color-sidebar-background: rgb(26, 20, 38);
+    --color-sidebar-foreground: rgb(244, 244, 249);
+    --color-sidebar-primary: rgb(66, 112, 209);
+    --color-sidebar-primary-foreground: rgb(255, 255, 255);
+    --color-sidebar-accent: rgb(33, 29, 48);
+    --color-sidebar-accent-foreground: rgb(244, 244, 249);
+    --color-sidebar-border: rgb(33, 29, 48);
+    --color-sidebar-ring: rgb(0, 153, 196);
   }
 }
