@@ -25,11 +25,11 @@
   --color-text-muted: rgb(149, 175, 194);
 
   /* Status Colors */
-  --color-success: rgb(68, 163, 80);
+  --color-success: rgb(57, 205, 98);
   --color-success-light: rgb(229, 253, 229);
-  --color-warning: rgb(227, 194, 59);
+  --color-warning: rgb(233, 178, 0);
   --color-warning-light: rgb(253, 246, 216);
-  --color-error: rgb(240, 86, 83);
+  --color-error: rgb(228, 3, 59);
   --color-error-light: rgb(255, 235, 232);
 
   /* Surfaces */
@@ -50,7 +50,7 @@
   --color-sidebar-border: rgb(198, 211, 221);
   --color-sidebar-hover: rgb(234, 247, 255);
   --color-sidebar-active: rgb(0, 170, 146);
-  --color-sidebar-active-bg: rgb(217, 255, 246);
+  --color-sidebar-active-bg: rgb(57,205,204);
 
   /* Stats Cards */
   --color-users-icon: rgb(140, 154, 255);
@@ -61,6 +61,13 @@
   --color-loans-bg: rgb(253, 246, 216);
   --color-savings-icon: rgb(240, 86, 83);
   --color-savings-bg: rgb(255, 235, 232);
+
+  /* Table seperator */
+  --color-tableline: rgb(244, 245, 248);
+
+  /* special */
+  --color-page: rgb(63, 125, 26);
+  --color-text-page: rgb(33, 63, 125);
 
   /* Radius */
   --radius-sm: calc(0.375rem - 4px);

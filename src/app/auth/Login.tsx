@@ -1,90 +1,67 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { z } from "zod";
 import Image from "next/image";
-
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { storage } from "@/utils/storage";
 
-
-//  Schema & Types
+// Zod schema for validation
 const loginSchema = z.object({
-  email: z.string().email("Invalid email format"),
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(
-      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?:.*[@$!%*?&-])?[A-Za-z\d@$!%*?&-]{8,}$/,
-      "Password must contain at least one uppercase, one lowercase, and a number"
-    ),
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(1, "Password is required"),
 });
 
-type LoginFormData = z.infer<typeof loginSchema>;
+type LoginForm = z.infer<typeof loginSchema>;
 
-const TOKEN_KEY = "auth_token";
-const ROLE_KEY = "role";
-const USER_ID_KEY = "userId";
-
-
-// Login Component
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
   const router = useRouter();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormData>({
+  } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
-    mode: "onBlur",
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
-
   // Submit Handler
-  const onSubmit = useCallback(
-    async (data: LoginFormData) => {
-      setLoading(true);
-      setError(null);
+  const onSubmit = async (data: LoginForm) => {
+    setLoading(true);
 
-      try {
-        const user = await storage.getUserByEmail(data.email);
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        if (!user || user.password !== data.password) {
-          setError("Invalid email or password");
-          return;
-        }
+      // For demo purposes, accept any valid credentials
+      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("userEmail", data.email);
 
-        const token = user.token ?? crypto.randomUUID();
-        await storage.saveUser({ ...user, token });
-
-        localStorage.setItem(TOKEN_KEY, token);
-        localStorage.setItem(ROLE_KEY, user.role ?? "user");
-        localStorage.setItem(USER_ID_KEY, user.id);
-
-        router.push("/dashboard");
-      } catch (err: unknown) {
-        const message =
-          err instanceof Error
-            ? err.message
-            : "Login failed. Please try again.";
-        setError(message);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [router]
-  );
-
+      toast.success(
+      <div>
+        <span className="text-text-primary font-semibold"> 
+          Logged in successfully!
+        </span>
+      </div>
+      );
+      router.push("/features/Dashboard");
+    } catch (error) {
+      toast.error("Login failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex bg-white">
@@ -139,16 +116,6 @@ export default function Login() {
               Enter details to login.
             </p>
           </header>
-
-          {/* Error */}
-          {error && (
-            <p
-              role="alert"
-              className="mb-4 rounded bg-red-100 p-2 text-sm text-red-600"
-            >
-              {error}
-            </p>
-          )}
 
           {/* Form */}
           <form

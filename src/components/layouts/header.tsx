@@ -5,13 +5,13 @@ import { Search, Bell, ChevronDown, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
 
 // Constants
 const USER_MENU_ITEMS = [
@@ -36,7 +36,7 @@ export function Header() {
   );
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-border h-24 flex items-center justify-between px-6">
+    <header className="sticky top-0 z-50 bg-white border-b border-border h-22 flex items-center justify-between px-6 drop-shadow-md">
       {/* Logo */}
       <div className="flex items-center gap-2">
         <Image
@@ -76,11 +76,11 @@ export function Header() {
       </form>
 
       {/* Right side actions */}
-      <nav aria-label="Header actions" className="flex items-center gap-4">
+      <nav aria-label="Header actions" className="flex items-center gap-6">
         {/* Docs link */}
         <a
           href="#"
-          className="hidden md:block text-base font-normal text-text-secondary hover:text-primary underline"
+          className="hidden md:block text-base font-normal text-text-primary hover:text-primary underline"
         >
           Docs
         </a>
@@ -92,44 +92,43 @@ export function Header() {
           className="relative"
           aria-label="Notifications"
         >
-          <Bell size={20} aria-hidden="true" />
-          <span
-            className="absolute -top-1 -right-1 w-3 h-3 bg-error rounded-full"
-            role="status"
-            aria-label="New notifications"
-            aria-live="polite"
-          />
+          <Bell size={26} aria-hidden="true" className="text-text-primary" />
         </Button>
+        <div className="flex gap-2">
+          <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+            <Avatar className="rounded-full w-11 h-12">
+              <AvatarImage src="https://res.cloudinary.com/dxvf9uqwe/image/upload/v1758749578/image_4_1_lw6fnz.svg" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+          </div>
 
-        {/* User Dropdown Menu */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              className="flex items-center gap-2 px-2"
-              aria-label="User menu"
-            >
-              <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                <User size={16} aria-hidden="true" />
-              </div>
-              <span className="hidden md:block text-base font-medium">
-                Adedotun
-              </span>
-              <ChevronDown size={16} aria-hidden="true" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            {USER_MENU_ITEMS.map((item) => (
-              <DropdownMenuItem
-                key={item.label}
-                onSelect={item.action}
-                className="cursor-pointer"
+          {/* User Dropdown Menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="flex items-center gap-2 px-2 cursor-pointer"
+                aria-label="User menu"
               >
-                {item.label}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+                <span className="hidden md:block text-base font-medium text-text-primary">
+                  Adedeji
+                </span>
+                <ChevronDown strokeWidth={3} size={16} aria-hidden="true" className="text-text-primary" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48 border-border">
+              {USER_MENU_ITEMS.map((item) => (
+                <DropdownMenuItem
+                  key={item.label}
+                  onSelect={item.action}
+                  className="cursor-pointer text-text-primary"
+                >
+                  {item.label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </nav>
     </header>
   );
