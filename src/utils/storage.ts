@@ -7,13 +7,9 @@ const USER_STORE = "users";
 
 class Storage {
   private db: IDBDatabase | null = null;
-  private initializing: Promise<void> | null = null;
 
-  private async ensureDB(): Promise<void> {
-    if (this.db) return;
-    if (this.initializing) return this.initializing;
-
-    this.initializing = new Promise((resolve, reject) => {
+  async init(): Promise<void> {
+    return new Promise((resolve, reject) => {
       const request = indexedDB.open(DB_NAME, DB_VERSION);
 
       request.onerror = () => reject(request.error);
@@ -31,12 +27,11 @@ class Storage {
         }
       };
     });
-
-    return this.initializing;
   }
 
   async saveUser(user: User): Promise<void> {
-    await this.ensureDB();
+    if (!this.db) await this.init();
+
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([USER_STORE], "readwrite");
       const store = transaction.objectStore(USER_STORE);
@@ -48,7 +43,8 @@ class Storage {
   }
 
   async getUser(id: string): Promise<User | null> {
-    await this.ensureDB();
+    if (!this.db) await this.init();
+
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([USER_STORE], "readonly");
       const store = transaction.objectStore(USER_STORE);
@@ -60,7 +56,8 @@ class Storage {
   }
 
   async getAllUsers(): Promise<User[]> {
-    await this.ensureDB();
+    if (!this.db) await this.init();
+
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([USER_STORE], "readonly");
       const store = transaction.objectStore(USER_STORE);
@@ -72,7 +69,8 @@ class Storage {
   }
 
   async deleteUser(id: string): Promise<void> {
-    await this.ensureDB();
+    if (!this.db) await this.init();
+
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction([USER_STORE], "readwrite");
       const store = transaction.objectStore(USER_STORE);
@@ -82,28 +80,11 @@ class Storage {
       request.onsuccess = () => resolve();
     });
   }
-
-  async getUserByEmail(email: string): Promise<User | null> {
-    await this.ensureDB();
-    return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction([USER_STORE], "readonly");
-      const store = transaction.objectStore(USER_STORE);
-      const index = store.index("email");
-      const request = index.get(email);
-
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result || null);
-    });
-  }
 }
 
 // Fallback to localStorage if IndexedDB is not available
 class LocalStorageBackup {
   private storageKey = "lendsqr_users";
-
-  private log(msg: string) {
-    console.warn(`[LocalStorageBackup] ${msg}`);
-  }
 
   saveUser(user: User): Promise<void> {
     try {
@@ -117,7 +98,6 @@ class LocalStorageBackup {
       }
 
       localStorage.setItem(this.storageKey, JSON.stringify(users));
-      this.log(`Saved user ${user.id}`);
       return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);
@@ -147,18 +127,7 @@ class LocalStorageBackup {
     try {
       const users = this.getAllUsers().filter((u) => u.id !== id);
       localStorage.setItem(this.storageKey, JSON.stringify(users));
-      this.log(`Deleted user ${id}`);
       return Promise.resolve();
-    } catch (error) {
-      return Promise.reject(error);
-    }
-  }
-
-  getUserByEmail(email: string): Promise<User | null> {
-    try {
-      const users = this.getAllUsers();
-      const user = users.find((u) => u.email === email) || null;
-      return Promise.resolve(user);
     } catch (error) {
       return Promise.reject(error);
     }

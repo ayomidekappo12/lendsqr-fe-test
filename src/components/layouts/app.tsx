@@ -16,7 +16,7 @@ const App = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     // Check if token exists in localStorage
-    const token = localStorage.getItem("auth_token");
+    const token = localStorage.getItem('isAuthenticated');
     setIsLoggedIn(!!token);
   }, []);
 
