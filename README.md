@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+ Lendsqr FE Test
 
-## Getting Started
+A frontend test project for Lendsqr built with Next.js, TypeScript, Tailwind CSS, and a custom design system (pixel-perfect to Figma).
+It includes authentication, user management, theming, testing setup, and clean Git workflows.
 
-First, run the development server:
+ Tech Stack
 
-```bash
+Next.js 14 – React framework with SSR
+
+TypeScript – Strict typing & safer code
+
+Tailwind CSS – Utility-first styling with custom tokens
+
+React Hook Form + Zod – Form handling & validation
+
+ShadCN UI – Reusable UI components
+
+Jest + React Testing Library – Unit & integration testing
+
+Netlify / VPS – Deployment ready
+
+🎨 Design System
+
+The design system is ported from Figma pixel-perfect specs, using OKLCH → RGB converted tokens.
+
+Base Colors
+
+Background: --color-background
+
+Foreground: --color-foreground
+
+Primary: --color-primary
+
+Secondary: --color-secondary
+
+Text Colors: --color-text-primary, --color-text-secondary, --color-text-muted
+
+Status: success, warning, error (light + strong)
+
+Sidebar & Stats Cards tokens
+
+
+🔑 Authentication & Session
+
+Login flow is handled via loginUser() in login.tsx.
+
+Secure server-side sessions created via /api/login.
+
+User data is persisted in storage.ts (syncs with localStorage/sessionStorage).
+
+user.ts defines the User model, including guarantor details.
+
+👤 User Details & Guarantor Section
+
+The User Details page renders multiple sections:
+
+Personal Info
+
+Education & Employment
+
+Socials
+
+Guarantor Info → wired to user.guarantor props (dynamic, not static).
+
+Testing
+Setup
+
+The project uses Jest + React Testing Library with a custom jest.setup.ts.
+
+npm run test
+
+
+🛠️ Development
+Installation
+git clone https://github.com/your-username/lendsqr-fe-test.git
+cd lendsqr-fe-test
+npm install
+
+Running Locally
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Runs at: http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Linting
+npm run lint
 
-## Learn More
+Build
+npm run build
+npm run start
 
-To learn more about Next.js, take a look at the following resources:
+🌐 Deployment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Netlify (recommended) → Push to main branch auto-deploys.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Or manual VPS setup → run npm run build && npm run start.
 
-## Deploy on Vercel
+ Features Completed
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+ Pixel-perfect design system (RGB)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+ Dark mode with token overrides
+
+ Authentication & session handling
+
+ User details page with dynamic Guarantor section
+
+ Responsive layout (mobile + desktop)
+
+ Jest + RTL setup for testing
+
+ Git workflow & branch strategy
+
+📄 License
+
+This project is licensed under the MIT License.
