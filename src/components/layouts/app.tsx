@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { SWRConfig } from "swr";
 import { fetcher } from "@/lib/utils";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -13,12 +14,16 @@ import Header from "@/components/layouts/header";
 
 const App = ({ children }: { children: React.ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     // Check if token exists in localStorage
-    const token = localStorage.getItem('isAuthenticated');
+    const token = localStorage.getItem("isAuthenticated");
     setIsLoggedIn(!!token);
   }, []);
+
+  // Only show header if logged in AND pathname starts with /features/
+  const showHeader = isLoggedIn && pathname?.startsWith("/features");
 
   return (
     <ErrorProvider>
@@ -38,8 +43,7 @@ const App = ({ children }: { children: React.ReactNode }) => {
             <Toaster />
             <Sonner />
 
-            {/* Only show Header if logged in */}
-            {isLoggedIn && <Header />}
+            {showHeader && <Header />}
 
             {children}
             <Toaster />

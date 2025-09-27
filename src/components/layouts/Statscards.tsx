@@ -1,6 +1,6 @@
 "use client";
 
-import { Users, Users2, HandCoins, PiggyBank } from "lucide-react";
+import { Users, Users2, FileText, PiggyBank } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { UserStats } from "@/types/user";
 
@@ -14,43 +14,46 @@ const statsConfig = [
     icon: Users,
     label: "USERS",
     key: "users" as keyof UserStats,
-    iconColor: "text-purple-500",
-    bgColor: "bg-purple-50",
+    iconColor: "text-[#DF18FF]",
+    bgColor: "bg-[#DF18FF]/10",
   },
   {
     icon: Users2,
     label: "ACTIVE USERS",
     key: "activeUsers" as keyof UserStats,
-    iconColor: "text-blue-500",
-    bgColor: "bg-blue-50",
+    iconColor: "text-[#5718FF]",
+    bgColor: "bg-[#5718FF]/10",
   },
   {
-    icon: HandCoins,
+    icon: FileText,
     label: "USERS WITH LOANS",
     key: "usersWithLoans" as keyof UserStats,
-    iconColor: "text-yellow-500",
-    bgColor: "bg-yellow-50",
+    iconColor: "text-[#F55F44]",
+    bgColor: "bg-[#F55F44]/10",
   },
   {
     icon: PiggyBank,
     label: "USERS WITH SAVINGS",
     key: "usersWithSavings" as keyof UserStats,
-    iconColor: "text-pink-500",
-    bgColor: "bg-pink-50",
+    iconColor: "text-[#FF3366]",
+    bgColor: "bg-[#FF3366]/10",
   },
 ];
 
 export function StatsCards({ stats, loading }: StatsCardsProps) {
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
         {[...Array(4)].map((_, i) => (
-          <Card key={i} className="p-6 animate-pulse border-border">
-            <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
-              <div className="space-y-2 flex-1">
-                <div className="h-3 bg-gray-200 rounded w-20"></div>
-                <div className="h-6 bg-gray-200 rounded w-16"></div>
+          <Card
+            key={i}
+            className="p-4 sm:p-6 animate-pulse border border-border rounded-lg"
+          >
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-200 rounded-full"></div>
+              <div className="flex-1 space-y-2">
+                <div className="h-3 bg-gray-200 rounded w-16 sm:w-20"></div>
+                <div className="h-5 sm:h-6 bg-gray-200 rounded w-12 sm:w-16"></div>
               </div>
             </div>
           </Card>
@@ -60,7 +63,7 @@ export function StatsCards({ stats, loading }: StatsCardsProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
       {statsConfig.map((config) => {
         const IconComponent = config.icon;
         const value = stats[config.key];
@@ -68,19 +71,24 @@ export function StatsCards({ stats, loading }: StatsCardsProps) {
         return (
           <Card
             key={config.key}
-            className="p-6 hover:shadow-md transition-shadow border-border"
+            className="p-4 sm:p-6 hover:shadow-md transition-shadow border border-border rounded-lg"
           >
-            <div className="flex flex-col items-start gap-2 space-x-4">
+            <div className="flex flex-col items-start sm:gap-4 gap-2">
+              {/* Icon */}
               <div
-                className={`w-10 h-10 ${config.bgColor} rounded-full flex items-center justify-center`}
+                className={`w-8 h-8 sm:w-10 sm:h-10 ${config.bgColor} rounded-full flex items-center justify-center`}
               >
-                <IconComponent className={`w-5 h-5 ${config.iconColor}`} />
+                <IconComponent
+                  className={`w-4 h-4 sm:w-5 sm:h-5 ${config.iconColor}`}
+                />
               </div>
+
+              {/* Text */}
               <div>
-                <p className="text-sm font-medium text-text-secondary uppercase tracking-wider">
+                <p className="text-xs sm:text-sm font-medium text-text-secondary uppercase tracking-wider">
                   {config.label}
                 </p>
-                <p className="text-2xl font-semibold text-text-primary">
+                <p className="text-lg sm:text-2xl font-bold text-text-primary">
                   {value.toLocaleString()}
                 </p>
               </div>

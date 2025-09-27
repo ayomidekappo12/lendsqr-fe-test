@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   MoreVertical,
@@ -14,29 +14,42 @@ import {
 } from "lucide-react";
 import { Sidebar } from '@/components/layouts/Sidebar';
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { StatsCards } from '@/components/layouts/Statscards';
-import { StatusBadge } from '@/components/layouts/Statusbadge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { StatsCards } from "@/components/layouts/Statscards";
+import { StatusBadge } from "@/components/layouts/Statusbadge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { TableColumnHeader } from "@/components/TableColumnHeader";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Card } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Card } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { mockApi } from '@/utils/mockApi';
-import { User, UserStats } from '@/types/user';
+} from "@/components/ui/dialog";
+import { mockApi } from "@/utils/mockApi";
+import { User, UserStats } from "@/types/user";
 import { toast } from "sonner";
 
 interface UserFilters {
@@ -159,8 +172,23 @@ export default function Users() {
   };
 
   const handleUserAction = (userId: string, action: string) => {
-    // Simulate user action
-    toast.success(
+  setUsers((prevUsers) =>
+    prevUsers.map((user) =>
+      user.id === userId
+        ? {
+            ...user,
+            status:
+              action === "Blacklist"
+                ? "Blacklisted"
+                : action === "Activate"
+                ? "Active"
+                : user.status,
+          }
+        : user
+    )
+  );
+
+  toast.success(
     <div className="flex flex-col space-y-1">
       <span className="font-bold">Action performed</span>
       <span className="text-text-primary font-semibold">
@@ -168,36 +196,46 @@ export default function Users() {
       </span>
     </div>
   );
-  };
+};
+
 
   const totalPages = Math.ceil(totalUsers / usersPerPage);
+
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <Sidebar />
-      
       <div className="flex-1 flex flex-col">
-        <main className="flex-1 p-6 lg:p-8">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8">
           <div className="max-w-7xl mx-auto">
-            <h1 className="text-2xl font-bold text-text-primary mb-8">Users</h1>
-            
+            <h1 className="text-xl sm:text-2xl font-bold text-text-primary mb-6 sm:mb-8">
+              Users
+            </h1>
+
             <StatsCards stats={stats} loading={loading} />
 
-            {/* Users Table */}
+            {/* Users Table / Mobile Cards */}
             <Card className="overflow-hidden border-border">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg font-semibold text-text-primary">All Users</h2>
+              <div className="p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+                  <h2 className="text-lg font-semibold text-text-primary">
+                    All Users
+                  </h2>
                   <Dialog open={filterOpen} onOpenChange={setFilterOpen}>
                     <DialogTrigger asChild>
-                      <Button variant="outline" size="sm" className="flex items-center gap-2 text-text-primary cursor-pointer">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center gap-2 w-full sm:w-auto cursor-pointer">
                         <Filter size={16} />
                         Filter
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-md py-4 border-border">
+                    <DialogContent className="w-[95vw] sm:max-w-md mx-auto py-4 border-border">
                       <DialogHeader>
-                        <DialogTitle className="text-text-primary"><VisuallyHidden>Filter Users</VisuallyHidden></DialogTitle>
+                        <DialogTitle>
+                          <VisuallyHidden>Filter Users</VisuallyHidden>
+                        </DialogTitle>
                       </DialogHeader>
                       <div className="space-y-4">
                         <div>
@@ -286,14 +324,13 @@ export default function Users() {
                         <div className="h-4 bg-gray-200 rounded w-1/6"></div>
                         <div className="h-4 bg-gray-200 rounded w-1/4"></div>
                         <div className="h-4 bg-gray-200 rounded w-1/6"></div>
-                        <div className="h-4 bg-gray-200 rounded w-1/6"></div>
-                        <div className="h-4 bg-gray-200 rounded w-1/12"></div>
                       </div>
                     ))}
                   </div>
                 ) : (
                   <>
-                    <div className="overflow-x-auto">
+                    {/* Desktop Table */}
+                    <div className="hidden lg:block overflow-x-auto">
                       <Table>
                         <TableHeader>
                           <TableHead>
@@ -336,7 +373,7 @@ export default function Users() {
                                     </Button>
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end" className="border-border p-3 font-medium text-base text-text-secondary">
-                                    <DropdownMenuItem className="hover:bg-text-secondary/20 cursor-pointer" onClick={() => router.push(`/features/Users/${user.id}`)}>
+                                    <DropdownMenuItem className="hover:bg-text-secondary/20 cursor-pointer" onClick={() => router.push(`/features/UserDetails/${user.id}`)}>
                                       <Eye size={16} className="mr-2" />
                                       View Details
                                     </DropdownMenuItem>
@@ -357,16 +394,53 @@ export default function Users() {
                       </Table>
                     </div>
 
+                    {/* Mobile Cards */}
+                    <div className="lg:hidden space-y-4">
+                      {users.map((user) => (
+                        <Card key={user.id} className="p-4 border-border">
+                          <div className="flex items-start justify-between mb-3">
+                            <div>
+                              <h3 className="font-medium text-text-primary">
+                                {user.username}
+                              </h3>
+                              <p className="text-sm text-text-secondary">
+                                {user.organization}
+                              </p>
+                            </div>
+                            <StatusBadge status={user.status} />
+                          </div>
+                          <div className="space-y-1 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-text-secondary">Email</span>
+                              <span className="truncate ml-2">
+                                {user.email}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-text-secondary">Phone</span>
+                              <span>{user.phoneNumber}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-text-secondary">
+                                Joined
+                              </span>
+                              <span>{user.dateJoined}</span>
+                            </div>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
                   </>
                 )}
               </div>
             </Card>
-            {/* Pagination */}
-                    <div className="flex items-center justify-between mt-6">
-                      <div className="text-sm font-normal text-text-secondary">
+
+                                {/* Pagination */}
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-6">
+                      <div className="text-sm font-normal text-text-secondary text-center sm:text-left">
                         Showing<span className="bg-page/10 rounded-lg p-2 mx-1 font-medium text-sm text-text-page">{((currentPage - 1) * usersPerPage) + 1} to {Math.min(currentPage * usersPerPage, totalUsers)}</span>of {totalUsers}
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-center gap-2">
                         <Button
                           size="sm"
                           className="bg-page/10 w-8 h-8 rounded-lg hover:bg-page cursor-pointer"
@@ -391,6 +465,7 @@ export default function Users() {
                             );
                           })}
                         </div>
+
                         <Button
                           size="sm"
                           className="bg-page/10 w-8 h-8 rounded-lg hover:bg-page cursor-pointer"
