@@ -1,13 +1,23 @@
 import { User } from "../types/user";
 
-// IndexedDB utilities for storing user details
+/**
+ * Constants for IndexedDB configuration
+ */
 const DB_NAME = "LendsqrDB";
 const DB_VERSION = 1;
 const USER_STORE = "users";
 
+/**
+ * Storage class using IndexedDB as the primary persistence layer.
+ * Provides CRUD operations for user records.
+ */
 class Storage {
   private db: IDBDatabase | null = null;
 
+  /**
+   * Initialize IndexedDB connection.
+   * Creates object store and indexes if not already present.
+   */
   async init(): Promise<void> {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open(DB_NAME, DB_VERSION);
@@ -29,12 +39,15 @@ class Storage {
     });
   }
 
+  /**
+   * Save or update a user in IndexedDB.
+   */
   async saveUser(user: User): Promise<void> {
     if (!this.db) await this.init();
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction([USER_STORE], "readwrite");
-      const store = transaction.objectStore(USER_STORE);
+      const tx = this.db!.transaction([USER_STORE], "readwrite");
+      const store = tx.objectStore(USER_STORE);
       const request = store.put(user);
 
       request.onerror = () => reject(request.error);
@@ -42,12 +55,15 @@ class Storage {
     });
   }
 
+  /**
+   * Retrieve a user by ID.
+   */
   async getUser(id: string): Promise<User | null> {
     if (!this.db) await this.init();
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction([USER_STORE], "readonly");
-      const store = transaction.objectStore(USER_STORE);
+      const tx = this.db!.transaction([USER_STORE], "readonly");
+      const store = tx.objectStore(USER_STORE);
       const request = store.get(id);
 
       request.onerror = () => reject(request.error);
@@ -55,12 +71,15 @@ class Storage {
     });
   }
 
+  /**
+   * Retrieve all users from IndexedDB.
+   */
   async getAllUsers(): Promise<User[]> {
     if (!this.db) await this.init();
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction([USER_STORE], "readonly");
-      const store = transaction.objectStore(USER_STORE);
+      const tx = this.db!.transaction([USER_STORE], "readonly");
+      const store = tx.objectStore(USER_STORE);
       const request = store.getAll();
 
       request.onerror = () => reject(request.error);
@@ -68,12 +87,15 @@ class Storage {
     });
   }
 
+  /**
+   * Delete a user by ID.
+   */
   async deleteUser(id: string): Promise<void> {
     if (!this.db) await this.init();
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction([USER_STORE], "readwrite");
-      const store = transaction.objectStore(USER_STORE);
+      const tx = this.db!.transaction([USER_STORE], "readwrite");
+      const store = tx.objectStore(USER_STORE);
       const request = store.delete(id);
 
       request.onerror = () => reject(request.error);
@@ -82,11 +104,17 @@ class Storage {
   }
 }
 
-// Fallback to localStorage if IndexedDB is not available
+/**
+ * Fallback storage class that uses localStorage.
+ * Provides the same interface as IndexedDB storage for consistency.
+ */
 class LocalStorageBackup {
   private storageKey = "lendsqr_users";
 
-  saveUser(user: User): Promise<void> {
+  /**
+   * Save or update a user in localStorage.
+   */
+  async saveUser(user: User): Promise<void> {
     try {
       const users = this.getAllUsers();
       const existingIndex = users.findIndex((u) => u.id === user.id);
@@ -98,22 +126,26 @@ class LocalStorageBackup {
       }
 
       localStorage.setItem(this.storageKey, JSON.stringify(users));
-      return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);
     }
   }
 
-  getUser(id: string): Promise<User | null> {
+  /**
+   * Retrieve a user by ID from localStorage.
+   */
+  async getUser(id: string): Promise<User | null> {
     try {
       const users = this.getAllUsers();
-      const user = users.find((u) => u.id === id) || null;
-      return Promise.resolve(user);
+      return users.find((u) => u.id === id) || null;
     } catch (error) {
       return Promise.reject(error);
     }
   }
 
+  /**
+   * Retrieve all users from localStorage.
+   */
   getAllUsers(): User[] {
     try {
       const stored = localStorage.getItem(this.storageKey);
@@ -123,23 +155,28 @@ class LocalStorageBackup {
     }
   }
 
-  deleteUser(id: string): Promise<void> {
+  /**
+   * Delete a user by ID from localStorage.
+   */
+  async deleteUser(id: string): Promise<void> {
     try {
       const users = this.getAllUsers().filter((u) => u.id !== id);
       localStorage.setItem(this.storageKey, JSON.stringify(users));
-      return Promise.resolve();
     } catch (error) {
       return Promise.reject(error);
     }
   }
 }
 
-// Create storage instance with fallback
+/**
+ * Export a unified storage instance.
+ * Prefers IndexedDB, falls back to localStorage if unavailable.
+ */
 export const storage = (() => {
   if (typeof window !== "undefined" && "indexedDB" in window) {
     return new Storage();
   } else {
-    console.warn("IndexedDB not available, falling back to localStorage");
+    console.warn("⚠️ IndexedDB not available, falling back to localStorage");
     return new LocalStorageBackup();
   }
 })();

@@ -105,7 +105,7 @@ export function Sidebar({ className }: SidebarProps) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50
+        className={`fixed sm:static inset-y-0 left-0 z-50 sm:z-0
           w-64 bg-white border-r border-border
           transform ${isOpen ? "translate-x-0" : "-translate-x-full"} 
           lg:translate-x-0
