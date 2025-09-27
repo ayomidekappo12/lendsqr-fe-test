@@ -18,8 +18,8 @@ const App = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     // Check if token exists in localStorage
-    const token = localStorage.getItem("isAuthenticated");
-    setIsLoggedIn(!!token);
+    const authenticated = localStorage.getItem("isAuthenticated");
+    setIsLoggedIn(authenticated === "true");
   }, []);
 
   // Only show header if logged in AND pathname starts with /features/

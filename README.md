@@ -5,7 +5,7 @@ It includes authentication, user management, theming, testing setup, and clean G
 
  Tech Stack
 
-Next.js 14 – React framework with SSR
+Next.js 15 – React framework with SSR
 
 TypeScript – Strict typing & safer code
 
