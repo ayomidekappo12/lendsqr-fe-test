@@ -60,7 +60,7 @@ export interface User extends BankAccount, SocialProfiles {
   sectorOfEmployment: string;
   durationOfEmployment: string;
   officeEmail: string;
-  monthlyIncome: string;
+  monthlyIncome: [string, string];
   loanRepayment: string;
   guarantors?: Guarantor[];
   tier: number;

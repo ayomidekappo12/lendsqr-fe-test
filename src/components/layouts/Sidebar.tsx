@@ -72,65 +72,58 @@ const menuItems = [
 export function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-
   const [isOpen, setIsOpen] = useState(false);
 
-  const isActive = (path: string) => {
-    if (!pathname) return false;
-    return pathname.toLowerCase().startsWith(path.toLowerCase());
-  };
-
-
+  const isActive = (path: string) =>
+    pathname?.toLowerCase().startsWith(path.toLowerCase());
 
   const handleLogout = () => {
-    // Clear auth details
     localStorage.removeItem("auth_token");
     localStorage.removeItem("role");
     localStorage.removeItem("userId");
-
-    // Redirect to login
     router.push("/login");
   };
 
   return (
     <>
-      {/* Mobile menu button */}
+      {/* Mobile menu toggle */}
       <button
         className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-md shadow-md"
         onClick={() => setIsOpen(!isOpen)}
+        aria-label="Toggle menu"
       >
         {isOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
 
-      {/* Mobile overlay */}
+      {/* Overlay for mobile */}
       {isOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          className="lg:hidden fixed inset-0 bg-black/50 opacity-50 z-40"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`
-          fixed lg:static inset-y-0 left-0 z-40
+        className={`fixed sm:static inset-y-0 left-0 z-50 sm:z-0
           w-64 bg-white border-r border-border
-          transform ${
-            isOpen ? "translate-x-0" : "-translate-x-full"
-          } lg:translate-x-0
+          transform ${isOpen ? "translate-x-0" : "-translate-x-full"} 
+          lg:translate-x-0
           transition-transform duration-300 ease-in-out
           overflow-y-auto
-          ${className}
-        `}
+          flex flex-col
+          ${className}`}
       >
-        <div className="p-6">
+        <div className="p-6 flex-1">
 
           {/* Switch Organization */}
           <div className="mb-8">
-            <button className="flex items-center gap-2 text-sidebar-foreground hover:text-sidebar-active">
+            <button className="flex items-center gap-2 text-sidebar-foreground hover:text-sidebar-active w-full cursor-pointer">
               <Briefcase className="text-text-primary" size={16} />
-              <span className="text-base font-normal text-text-primary">Switch Organization</span>
-              <ChevronDown size={16} />
+              <span className="text-sm sm:text-base font-normal text-text-primary">
+                Switch Organization
+              </span>
+              <ChevronDown size={16} className="ml-auto text-text-primary" />
             </button>
           </div>
 
@@ -138,17 +131,16 @@ export function Sidebar({ className }: SidebarProps) {
           <div className="mb-6">
             <Link
               href="/features/Dashboard"
-              className={`
-                flex items-center gap-3 px-3 py-2 text-sm
+              onClick={() => setIsOpen(false)}
+              className={`flex items-center gap-3 px-3 py-2 text-sm transition-colors
                 ${
                   isActive("/features/Dashboard")
-                    ? "bg-sidebar-active-bg/20 text-sidebar-active border-l-3 border-sidebar-primary px-0"
+                    ? "bg-sidebar-active-bg/20 text-sidebar-active border-l-3 border-sidebar-primary"
                     : "text-sidebar-foreground hover:bg-sidebar-hover"
-                }
-              `}
+                }`}
             >
               <Home size={16} className="text-text-primary/80" />
-              <span className="text-base font-normal text-text-primary/60">Dashboard</span>
+              <span className="text-sm sm:text-base font-normal text-text-primary/60">Dashboard</span>
             </Link>
           </div>
 
@@ -164,18 +156,16 @@ export function Sidebar({ className }: SidebarProps) {
                     <li key={item.path}>
                       <Link
                         href={item.path}
-                        className={`
-                          flex items-center gap-3 px-3 py-2 text-sm transition-colors
+                        onClick={() => setIsOpen(false)}
+                        className={`flex items-center gap-3 px-3 py-2 text-sm transition-colors
                           ${
                             isActive(item.path)
                               ? "bg-sidebar-active-bg/20 text-sidebar-active border-l-3 border-sidebar-primary"
                               : "text-sidebar-foreground hover:bg-sidebar-hover"
-                          }
-                        `}
-                        onClick={() => setIsOpen(false)}
+                          }`}
                       >
-                        <item.icon className="text-text-primary/80" size={16} />
-                        <span className="text-text-primary/60 font-normal text-base">{item.label}</span>
+                         <item.icon className="text-text-primary/80" size={16} />
+                        <span className="text-text-primary/60 font-normal text-sm sm:text-base">{item.label}</span>
                       </Link>
                     </li>
                   ))}
@@ -183,17 +173,17 @@ export function Sidebar({ className }: SidebarProps) {
               </div>
             ))}
           </nav>
+        </div>
 
-          {/* Logout */}
-          <div className="mt-8 pt-6 border-t border-sidebar-border">
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-3 px-3 py-2 text-sidebar-foreground hover:text-error hover:bg-error-light rounded-md text-sm w-full"
-            >
-              <LogOut size={16} />
-              <span>Logout</span>
-            </button>
-          </div>
+        {/* Logout */}
+        <div className="p-6 border-t border-sidebar-border">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-3 py-2 text-sidebar-foreground hover:text-error hover:bg-error-light rounded-md text-sm w-full"
+          >
+            <LogOut size={16} />
+            <span>Logout</span>
+          </button>
         </div>
       </aside>
     </>

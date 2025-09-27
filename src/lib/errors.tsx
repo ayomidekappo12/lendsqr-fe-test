@@ -41,7 +41,7 @@ export class NormalizedError extends Error {
   }
 }
 
-// ✅ Type guard for React / TS checks
+// Type guard for React / TS checks
 export function isNormalizedError(err: unknown): err is NormalizedError {
   return err instanceof NormalizedError;
 }
